@@ -31,15 +31,17 @@ set xtics xspan / 20 rotate
 
 # define the values in x and y you want to be one 'equivalent:'
 # that is, xequiv units in x and yequiv units in y will make a square plot
-xequiv = 600 
-yequiv = 2 
+# xequiv = 600 
+# yequiv = 2 
 
 # aspect ratio of plot
-ar = yspan/xspan * xequiv/yequiv
+# ar = yspan/xspan * xequiv/yequiv
+# set size ratio ar
+
 
 # dimension of plot in x and y (pixels)
 # for constant height make ydim constant
-ydim = 1600 * ar
+ydim = 500
 xdim = 1600
 
 # set the x and y ranges
@@ -51,7 +53,6 @@ set terminal png
 set terminal png size xdim,ydim
 set output 'speedtest.png'
 
-set size ratio ar
 
 set style data linespoints
 

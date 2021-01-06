@@ -23,15 +23,16 @@ set xtics xspan / 20 rotate
 
 # define the values in x and y you want to be one 'equivalent:'
 # that is, xequiv units in x and yequiv units in y will make a square plot
-xequiv = 600 
-yequiv = 2 
+# xequiv = 600 
+# yequiv = 2 
 
 # aspect ratio of plot
-ar = yspan/xspan * xequiv/yequiv
+# ar = yspan/xspan * xequiv/yequiv
+# set size ratio ar
 
 # dimension of plot in x and y (pixels)
 # for constant height make ydim constant
-ydim = 1600 * ar
+ydim = 500
 xdim = 1600
 
 # set the x and y ranges
@@ -42,8 +43,6 @@ set yrange [GPVAL_DATA_Y_MIN:GPVAL_DATA_Y_MAX]
 set terminal png
 set terminal png size xdim,ydim
 set output 'netflix.png'
-
-set size ratio ar
 
 set style data linespoints
 
