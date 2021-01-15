@@ -10,7 +10,14 @@ echo "$start,$(echo $fastres | cut -d ' ' -f 1,2),$(echo $fastres | cut -d ' ' -
 
 # umobile kuala lumpur
 KL=11557
-speedtest --server $KL --csv >> $DIR/speedtest.csv
+UNI=9593
+RES=$(speedtest --server $KL --csv)
+if [ $? = 0 ]; then
+	echo "$RES" >> $DIR/speedtest.csv
+else
+	RES=$(speedtest --server $UNI --csv)
+	[ $? = 0 ] && echo "$RES" >> $DIR/speedtest.csv
+fi
 
 cd $DIR
 gnuplot -p netflix.gnuplot && cp netflix.png /var/www/html/ && chgrp www-data /var/www/html/netflix.png
