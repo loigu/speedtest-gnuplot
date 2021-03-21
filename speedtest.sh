@@ -16,18 +16,19 @@ PLOTS="$NETFLIX_PLOT $SPEEDTEST_PLOT $SPEEDTEST_PING_PLOT"
 
 run_netflix()
 {
-	start=$(date  '+%Y%m%d %H:%M')
-	fastres=$(fast -u --single-line)
+	local start=$(date  '+%Y%m%d %H:%M')
+	local fastres=$(fast -u --single-line)
 	[ "$?" != 0 ] && return 1
 
-	DOWN=$(echo $fastres | cut -d ' ' -f 1)
-	DOWN_UNIT=$(echo $fastres | cut -d ' ' -f 2)
+	local DOWN=$(echo $fastres | cut -d ' ' -f 1)
+	local DOWN_UNIT=$(echo $fastres | cut -d ' ' -f 2)
 	[ "$DOWN_UNIT" = "Gbps" ] && DOWN=$(expr $DOWN \* 1000)
 	
-	UP=$(echo $fastres | cut -d ' ' -f 3)
+	local UP=$(echo $fastres | cut -d ' ' -f 3)
 
-	expr $DOWN + $UP &>/dev/null || return 1
-	
+	local X=$(echo "print $UP + $DOWN" | bc 2>&1)
+	expr match "$X" '.*syntax\ error' &>/dev/null && return 1
+
 	echo "$start,$DOWN,$UP" >> "$DIR/$NETFLIX_LOG"
 	gnuplot -p netflix.gnuplot
 }
