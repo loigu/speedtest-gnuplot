@@ -4,6 +4,7 @@ SCRIPT=$(readlink -f "$0")
 DIR=$(dirname "$SCRIPT")
 HTML_ROOT=/var/www/html
 HTTP_GROUP="www-data"
+HTTP_USER="www-data"
 MAX_ITEMS=100
 
 NETFLIX_LOG=netflix.csv
@@ -75,7 +76,7 @@ install()
 {
 	cd "$DIR"
 	cp "index.html" "$HTML_ROOT"
-	chgrp $HTTP_GROUP "$HTML_ROOT/index.html"
+	[ "$(whoami)" != "$HTTP_USER" ] && sudo chgrp $HTTP_GROUP "$HTML_ROOT/index.html" && chmod g+rw "$HTML_ROOT/index.html"
 
 	[ -f "netflix.csv" ] && mv "netflix.csv" netflix.csv.1
 	echo 'date-time,down,up' > netflix.csv
@@ -91,7 +92,7 @@ publish()
 {
 	for f in $LOGS $PLOTS; do
 		cp "$DIR/$f" "$HTML_ROOT/$f"
-		chgrp $HTTP_GROUP "$HTML_ROOT/$f"
+		[ "$(whoami)" != "$HTTP_USER" ] && chgrp $HTTP_GROUP "$HTML_ROOT/$f"
 	done
 }
 
