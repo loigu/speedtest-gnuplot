@@ -22,6 +22,7 @@ rotate_file()
 		local tmp=$(mktemp)
 		head -n 1 "$1" > "$tmp" || return 1
 		tail -n "$MAX_ITEMS" "$1" >> "$tmp" && mv "$tmp" "$1"
+		#sudo chown "$HTTP_USER:$HTTP_GROUP" "$1"
 	fi
 }
 
@@ -50,19 +51,20 @@ run_netflix()
 
 	# plot
 	gnuplot -p netflix.gnuplot
+
 }
 
 run_speedtest()
 {
 	# speedtest servers
-	local KL=11557 # umobile KL
-	local UNI=9593 # university Kuala Terengganu
-	local RES=$(speedtest --csv)
-	if [ $? = 0 ]; then
+	local KL=19403 # digi kl
+	local UNI=28451 # uni5g Kepong
+	local RES=$(speedtest --timeout 60 --csv)
+	if [ $? = 0 ] && [ -n "$(echo $RES | tr -d '[:blank:]')" ]; then
 		echo "$RES" >> $DIR/speedtest.csv
 	else
-		RES=$(speedtest --server $UNI --csv)
-		[ $? = 0 ] && echo "$RES" >> "$DIR/$SPEEDTEST_LOG" || return 1
+		RES=$(speedtest --server $UNI --timeout 120 --csv)
+		[ $? = 0 ] && [ -n "$(echo $RES | tr -d '[:blank:]')" ] && echo "$RES" >> "$DIR/$SPEEDTEST_LOG" || return 1
 	fi
 
 	rotate_file "$DIR/$SPEEDTEST_LOG"
@@ -92,7 +94,7 @@ publish()
 {
 	for f in $LOGS $PLOTS; do
 		cp "$DIR/$f" "$HTML_ROOT/$f"
-		[ "$(whoami)" != "$HTTP_USER" ] && chgrp $HTTP_GROUP "$HTML_ROOT/$f"
+		[ "$(whoami)" != "$HTTP_USER" ] && sudo chown "$HTTP_USER:$HTTP_GROUP" "$HTML_ROOT/$f"
 	done
 }
 
